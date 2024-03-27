@@ -7,6 +7,6 @@ pip install -r requirements.txt
 python train.py
 
 # TODO:
-- [ ] add model save and reload
+- [x] add model save and reload
 - [ ] add episode-utility graph
 - [ ] test on double-pendulum
