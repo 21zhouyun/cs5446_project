@@ -50,7 +50,7 @@ for e in range(episodes):
         if len(agent.memory) > batch_size:
             agent.replay(batch_size)
 
-    if e % 100 == 0:
+    if e % 10 == 0:
         agent.save_model("./models/dqn_{}_episode_{}.pt".format(task_name, e))
 
 env.close()
@@ -58,17 +58,17 @@ env.close()
 
 
 # demonstrate agent
-env = gym.make(task_name, render_mode="human")
+env = gym.make(task_name, render_mode="rgb_array")
 env = RecordVideo(env, "./videos/dqn_{}_episode_{}.pt".format(task_name, episodes), episode_trigger=lambda x: True)
-env.start_video_recorder()
 
-state, _ = env.reset()
-for time in range(1000):  # Set to a value that suits your environment's maximum step
-    action = agent.act(state)
-    next_state, reward, done, _, _ = env.step(action_map[action])
-    state = next_state
-    if done:
-        break
+for trial in range(10):
+    state, _ = env.reset()
+    for time in range(1000):  # Set to a value that suits your environment's maximum step
+        action = agent.act(state)
+        next_state, reward, done, _, _ = env.step(action_map[action])
+        state = next_state
+        if done:
+            break
 
 # env.close_video_recorder()
 env.close()
