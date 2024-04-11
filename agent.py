@@ -4,19 +4,20 @@ import torch.nn as nn
 import torch.optim as optim
 from collections import deque
 import random
-from model import DQN
+import copy
 
 class Agent:
-    def __init__(self, state_dim, action_dim):
+    def __init__(self, state_dim, action_dim, model):
         self.state_dim = state_dim
         self.action_dim = action_dim
-        self.memory = deque(maxlen=10000)
-        self.gamma = 0.99  # Discount rate
-        self.epsilon = 0.05  # Exploration rate
+        self.memory = deque(maxlen=100000)
+        self.gamma = 1.0  # Discount rate
+        self.epsilon = 0.1  # Exploration rate
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
-        self.model = DQN(state_dim, action_dim)
-        self.optimizer = optim.Adam(self.model.parameters())
+        # TODO: add a separate target model that only updates onces K episode
+        self.model = model
+        self.optimizer = optim.Adam(self.model.parameters(), lr=0.0001)
     
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
