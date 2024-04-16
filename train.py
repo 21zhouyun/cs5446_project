@@ -30,9 +30,9 @@ def get_adaptor_model(pretrained_path):
 
 # Main training loop
 # Change mujoco config here: .venv/lib/python3.12/site-packages/gymnasium/envs/mujoco/assets/inverted_pendulum.xml
-prefix = "from_scratch_double_gravity"
-task_name = 'InvertedPendulum-v5'
-# task_name = "InvertedDoublePendulum-v4"
+prefix = "from_scratch_double_gravity_reload_from_single_pretrained"
+# task_name = 'InvertedPendulum-v5'
+task_name = "InvertedDoublePendulum-v4"
 env = gym.make(task_name)
 episodes=500
 batch_size=64
@@ -49,8 +49,8 @@ action_map = get_discretized_action_map(env.action_space, 500)
 action_dim = len(action_map)
 
 previous_model = None
-model = MLP(state_dim, action_dim, previous_model)
-# model = torch.load("models/from_scratch_single_gravity_dqn_InvertedPendulum-v5_episode_100.pt")
+# model = MLP(state_dim, action_dim, previous_model)
+model = torch.load("models/from_scratch_single_gravity_dqn_InvertedDoublePendulum-v4_episode_500.pt")
 
 agent = Agent(state_dim, action_dim, model)
 

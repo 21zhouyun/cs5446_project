@@ -7,16 +7,18 @@ import random
 import copy
 
 class Agent:
-    def __init__(self, state_dim, action_dim, model):
+    def __init__(self, state_dim, action_dim, model, reward_shaping_model=None, reward_shaping_weight=0.1):
         self.state_dim = state_dim
         self.action_dim = action_dim
         self.memory = deque(maxlen=100000)
         self.gamma = 1.0  # Discount rate
-        self.epsilon = 0.1  # Exploration rate
+        self.epsilon = 0.05  # Exploration rate
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
+        self.epsilon_decay = 0.99
         # TODO: add a separate target model that only updates onces K episode
         self.model = model
+        self.reward_shaping_model = reward_shaping_model
+        self.reward_shaping_weight = reward_shaping_weight
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.0001)
     
     def remember(self, state, action, reward, next_state, done):
@@ -33,6 +35,8 @@ class Agent:
         minibatch = random.sample(self.memory, batch_size)
         for state, action, reward, next_state, done in minibatch:
             target = reward
+            if self.reward_shaping_model is not None:
+                target += self.reward_shaping_weight * (reward + self.gamma * torch.max(self.reward_shaping_model(next_state).detach()).item())
             if not done:
                 next_state = torch.tensor(next_state, dtype=torch.float).unsqueeze(0)
                 target = (reward + self.gamma * torch.max(self.model(next_state).detach()).item())
