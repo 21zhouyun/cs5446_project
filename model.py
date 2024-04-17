@@ -16,8 +16,10 @@ class MLP(nn.Module):
         # adaptor
         if previous_model is not None:
             previous_input_dim = previous_model.input_dim
+            # Non-linear adaptor
             self.fc.append(nn.Linear(input_dim, previous_input_dim))
             self.fc.append(previous_model)
+            self.fc.append(nn.Linear(output_dim, output_dim))
         else:
             in_dim = input_dim
             for out_dim in nn_dims:
